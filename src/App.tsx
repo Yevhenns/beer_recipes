@@ -5,14 +5,20 @@ import "./App.css";
 function App() {
   const [current, setCurrent] = useState(null);
 
-  const getRecipes = useStore((state) => state.getRecipes);
   const recipes = useStore((state) => state.recipes);
+  const getRecipes = useStore((state) => state.getRecipes);
+  const deleteItem = useStore((state) => state.deleteItem);
 
   const getCurrent = (id) => {
     const recipe = recipes.find((item) => item.id === id);
     setCurrent(recipe);
   };
   console.log(current);
+
+  const deleteCurrent = (id) => {
+    deleteItem(id);
+    setCurrent(null);
+  };
 
   useEffect(() => {
     getRecipes();
@@ -22,29 +28,40 @@ function App() {
       <div
         style={{
           width: "40vw",
-          textAlign: "left"         
+          textAlign: "left",
         }}
       >
-        {recipes.map(({ id, name }) => {
+        {recipes.slice(0, 15).map(({ id, name }) => {
           return (
             <div
-              style={{ cursor: "pointer", backgroundColor: "grey", height: '20vh' }}
+              style={{
+                cursor: "pointer",
+                height: "20vh",
+                display: "flex",
+                // justifyContent: "center",
+                alignItems: "center",
+              }}
               key={id}
               onClick={() => getCurrent(id)}
             >
-              {name}
+              <p>{id}</p>
+              <p>{name}</p>
             </div>
           );
         })}
       </div>
-      {current !== null && (
-        <div style={{ width: "60vw" }}>
-          <p>{current.name}</p>
-          <p>{current.brewers_tips}</p>
-          <img src={current.image_url} height={200} />
-          <button type="button">Delete</button>
-        </div>
-      )}
+      <div style={{ width: "60vw" }}>
+        {current !== null && (
+          <div>
+            <p>{current.name}</p>
+            <p>{current.brewers_tips}</p>
+            <img src={current.image_url} height={200} />
+            <button type="button" onClick={() => deleteCurrent(current.id)}>
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

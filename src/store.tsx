@@ -8,6 +8,11 @@ const useStore = create((set) => ({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     set({ recipes: response.data });
   },
+  deleteItem: (id) => {
+    set((state) => ({
+      recipes: state.recipes.filter((item) => item.id !== id),
+    }));
+  },
 }));
 
 export default useStore;
