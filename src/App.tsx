@@ -1,21 +1,34 @@
-import { useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 import useStore from "./store";
 import "./App.css";
 
-function App() {
-  const [current, setCurrent] = useState(null);
+interface Recipe {
+  id: number;
+  name: string;
+  brewers_tips: string;
+  image_url: string;
+}
 
-  const recipes = useStore((state) => state.recipes);
-  const getRecipes = useStore((state) => state.getRecipes);
-  const deleteItem = useStore((state) => state.deleteItem);
+interface Recipes {
+  recipes: Recipe[];
+  getCurrent: (id: number) => void;
+  deleteCurrent: (id: number) => void;
+}
 
-  const getCurrent = (id) => {
+const App: FC<Recipes> = () => {
+  const [current, setCurrent] = useState(null as null | Recipe);
+
+  const { recipes, getRecipes, deleteItem } = useStore();
+
+  const getCurrent = (id: number) => {
     const recipe = recipes.find((item) => item.id === id);
-    setCurrent(recipe);
+    if (recipe !== undefined) {
+      setCurrent(recipe);
+    }
   };
   console.log(current);
 
-  const deleteCurrent = (id) => {
+  const deleteCurrent = (id: number) => {
     deleteItem(id);
     setCurrent(null);
   };
@@ -38,7 +51,6 @@ function App() {
                 cursor: "pointer",
                 height: "20vh",
                 display: "flex",
-                // justifyContent: "center",
                 alignItems: "center",
               }}
               key={id}
@@ -64,6 +76,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
