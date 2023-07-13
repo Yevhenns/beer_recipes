@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import useStore from "./store";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [current, setCurrent] = useState(null);
 
+  const getRecipes = useStore((state) => state.getRecipes);
+  const recipes = useStore((state) => state.recipes);
+
+  const getCurrent = (id) => {
+    const recipe = recipes.find((item) => item.id === id);
+    setCurrent(recipe);
+  };
+  console.log(current);
+
+  useEffect(() => {
+    getRecipes();
+  }, [getRecipes]);
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          width: "40vw",
+          textAlign: "left"         
+        }}
+      >
+        {recipes.map(({ id, name }) => {
+          return (
+            <div
+              style={{ cursor: "pointer", backgroundColor: "grey", height: '20vh' }}
+              key={id}
+              onClick={() => getCurrent(id)}
+            >
+              {name}
+            </div>
+          );
+        })}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      {current !== null && (
+        <div style={{ width: "60vw" }}>
+          <p>{current.name}</p>
+          <p>{current.brewers_tips}</p>
+          <img src={current.image_url} height={200} />
+          <button type="button">Delete</button>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
