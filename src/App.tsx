@@ -25,7 +25,6 @@ const App: FC<Recipes> = () => {
   const [selected, setSelected] = useState([] as [] | { id: number }[]);
   const [sliceValue, setSliceValue] = useState([0, 15]);
   const [page, setPage] = useState(1);
-  console.log(sliceValue, page);
 
   const { recipes, getRecipes, deleteItem, deleteSelected } = useStore();
 
@@ -86,6 +85,10 @@ const App: FC<Recipes> = () => {
     setPage(1);
   };
 
+  const nextPage = () => {
+    setPage(page + 1);
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -112,6 +115,7 @@ const App: FC<Recipes> = () => {
         {recipes.slice(sliceValue[0], sliceValue[1]).map(({ id, name }) => {
           return (
             <div
+              className={selected.includes(id) ? "selected" : ""}
               style={{
                 cursor: "pointer",
                 height: "20vh",
@@ -127,6 +131,7 @@ const App: FC<Recipes> = () => {
             </div>
           );
         })}
+        <button onClick={nextPage}>Next page</button>
       </div>
       <div style={{ width: "60vw" }}>
         {current !== null && (
