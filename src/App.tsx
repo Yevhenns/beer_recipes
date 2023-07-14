@@ -24,8 +24,8 @@ const App: FC<Recipes> = () => {
   const [current, setCurrent] = useState(null as null | Recipe);
   const [selected, setSelected] = useState([] as [] | { id: number }[]);
   const [sliceValue, setSliceValue] = useState([0, 15]);
-
-  console.log(sliceValue);
+  const [page, setPage] = useState(1);
+  console.log(sliceValue, page);
 
   const { recipes, getRecipes, deleteItem, deleteSelected } = useStore();
 
@@ -72,8 +72,18 @@ const App: FC<Recipes> = () => {
     if (sliceValue[1] !== 25) {
       setSliceValue([sliceValue[0] + 5, sliceValue[1] + 5]);
     } else {
+      setPage(page + 1);
       setSliceValue([0, 15]);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
+  };
+
+  const reload = () => {
+    setSliceValue([0, 15]);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -82,8 +92,8 @@ const App: FC<Recipes> = () => {
   });
 
   useEffect(() => {
-    getRecipes();
-  }, [getRecipes]);
+    getRecipes(page);
+  }, [getRecipes, page]);
 
   useEffect(() => {
     if (!recipes.includes(current)) {
@@ -134,6 +144,7 @@ const App: FC<Recipes> = () => {
             Delete selected
           </button>
         )}
+        {page === 14 && <button onClick={reload}>Reload list</button>}
       </div>
     </div>
   );

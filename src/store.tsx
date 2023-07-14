@@ -9,17 +9,17 @@ interface Recipe {
 }
 interface Recipes {
   recipes: Recipe[];
-  getRecipes: () => Promise<void>;
+  getRecipes: (page: number) => Promise<void>;
   deleteItem: (id: number) => void;
   deleteSelected: (arr: [id: number]) => void;
 }
 
 const useStore = create<Recipes>((set) => ({
   recipes: [],
-  async getRecipes() {
+  async getRecipes(page: number) {
     try {
       const response = await axios.get<[]>(
-        "https://api.punkapi.com/v2/beers?page=1"
+        `https://api.punkapi.com/v2/beers?page=${page}`
       );
       const newArray = response.data.map(
         ({ id, name, brewers_tips, image_url }) => {
