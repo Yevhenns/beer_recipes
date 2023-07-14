@@ -23,7 +23,9 @@ interface Recipes {
 const App: FC<Recipes> = () => {
   const [current, setCurrent] = useState(null as null | Recipe);
   const [selected, setSelected] = useState([] as [] | { id: number }[]);
-  console.log(selected);
+  const [sliceValue, setSliceValue] = useState([0, 15]);
+
+  console.log(sliceValue);
 
   const { recipes, getRecipes, deleteItem, deleteSelected } = useStore();
 
@@ -60,6 +62,25 @@ const App: FC<Recipes> = () => {
     setSelected([]);
   };
 
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop !==
+      document.documentElement.offsetHeight
+    ) {
+      return;
+    }
+    if (sliceValue[1] !== 25) {
+      setSliceValue([sliceValue[0] + 5, sliceValue[1] + 5]);
+    } else {
+      setSliceValue([0, 15]);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  });
+
   useEffect(() => {
     getRecipes();
   }, [getRecipes]);
@@ -69,6 +90,7 @@ const App: FC<Recipes> = () => {
       setCurrent(null);
     }
   }, [current, recipes]);
+
   return (
     <div style={{ display: "flex" }}>
       <div
@@ -77,7 +99,7 @@ const App: FC<Recipes> = () => {
           textAlign: "left",
         }}
       >
-        {recipes.slice(0, 15).map(({ id, name }) => {
+        {recipes.slice(sliceValue[0], sliceValue[1]).map(({ id, name }) => {
           return (
             <div
               style={{
